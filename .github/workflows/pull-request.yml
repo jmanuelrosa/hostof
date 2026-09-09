@@ -1,0 +1,70 @@
+name: Pull request
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  secret-scan:
+    name: Secret Detection (GitLeaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Run GitLeaks secret scanner
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  security-scan:
+    name: Security Vulnerability Scan (Bearer)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Bearer Security Scan - Critical & High Severity
+        uses: bearer/bearer-action@v2
+        with:
+          severity: "critical,high"
+
+      - name: Bearer Security Scan - Medium, Low & Warning Severity
+        uses: bearer/bearer-action@v2
+        with:
+          severity: "medium,low,warning"
+          exit-code: 0
+
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependency
+        run: python -m pip install pytest
+
+      - name: Run tests
+        run: python -m pytest
+
+      - name: Compile Python sources
+        run: python -m py_compile hostof _hostof_runtime/*.py scripts/build.py tests/*.py
+
+      - name: Build standalone asset
+        run: python scripts/build.py
+
+      - name: Smoke-test standalone asset
+        run: |
+          smoke_dir="$RUNNER_TEMP/hostof-smoke"
+          mkdir -p "$smoke_dir"
+          cp dist/hostof "$smoke_dir/hostof"
+          (cd "$smoke_dir" && ./hostof --help)
+          (cd dist && sha256sum --check hostof.sha256)
