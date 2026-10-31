@@ -759,7 +759,9 @@ def normalise(target):
     if "://" not in target:
         target = f"https://{target}"
     parts = urllib.parse.urlsplit(target)
-    if not parts.hostname:
+    # dig reads a leading - or + as one of its own options, and no DNS label may start
+    # with either, so such a name is refused here rather than reaching the argv.
+    if not parts.hostname or parts.hostname.startswith(("-", "+")):
         return None, None
     return parts.hostname, urllib.parse.urlunsplit((parts.scheme, parts.netloc, parts.path or "/", "", ""))
 
