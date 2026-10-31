@@ -171,6 +171,8 @@ def test_cname_suffix_names_the_vendor(tool, hosts, vendor):
         ("https://example.com/a/b", "example.com"),
         ("http://example.com:8080/", "example.com"),
         ("", None),
+        ("https://-f/etc/passwd", None),
+        ("+short.example.com", None),
     ],
 )
 def test_normalise_accepts_a_url_or_a_bare_host(tool, target, host):
