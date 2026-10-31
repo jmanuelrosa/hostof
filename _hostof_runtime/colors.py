@@ -1,7 +1,12 @@
-"""Terminal colours used by hostof's bundled output helper.
+"""Terminal colours, matching what the fish half of the vocabulary emits.
 
-Colours are suppressed when stdout is not a terminal, so piping to a file or a test
-harness yields plain text. NO_COLOR and FORCE_COLOR override in the usual way.
+`_ui` colours through `set_color`, whose reset is `\\x1b[m` rather than the more common
+`\\x1b[0m`. Reproduced exactly so a python tool and a fish function are indistinguishable
+when both are on screen.
+
+Unlike `set_color`, these are suppressed when stdout is not a terminal, so piping to
+a file or a test harness yields plain text. NO_COLOR and FORCE_COLOR override, per the
+usual convention.
 """
 
 import os
@@ -17,7 +22,7 @@ CODES = {
     "blue": "\x1b[34m",
     "magenta": "\x1b[35m",
     "cyan": "\x1b[36m",
-    # Bright black keeps secondary text de-emphasised across terminal themes.
+    # brblack in fish: used for every de-emphasised suffix.
     "dim": "\x1b[90m",
     "bold": "\x1b[1m",
 }
@@ -62,7 +67,7 @@ def for_stream(text, stream):
 
     Some text is painted before its destination is known: argparse formats usage
     through a HelpFormatter that has no idea whether the parser is about to print it to
-    stdout for `--help` or to stderr for a refusal. Without this, redirected error
-    output from a terminal could contain escape codes.
+    stdout for `--help` or to stderr for a refusal. Without this, `tool bogus 2>log`
+    from a terminal writes escape codes into the log.
     """
     return text if enabled(stream) else strip(text)
