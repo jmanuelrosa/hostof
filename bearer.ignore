@@ -1,0 +1,20 @@
+{
+  "e83f66464a8a9f639ba65448dab8311f_0": {
+    "author": "Jose Manuel Rosa Moncayo",
+    "comment": "dig runs from an argv list with no shell, and normalise() refuses a hostname starting with - or + so it cannot be read as a dig option.",
+    "false_positive": true,
+    "ignored_at": "2026-10-31T13:00:00Z"
+  },
+  "be8ea47e62cc82328b508b13250bb8af_0": {
+    "author": "Jose Manuel Rosa Moncayo",
+    "comment": "The cache file name is one of three fixed dataset names under CACHE_DIR, never user input.",
+    "false_positive": true,
+    "ignored_at": "2026-10-31T13:00:00Z"
+  },
+  "be8ea47e62cc82328b508b13250bb8af_1": {
+    "author": "Jose Manuel Rosa Moncayo",
+    "comment": "The rename target is the same fixed dataset name under CACHE_DIR as the temporary file beside it.",
+    "false_positive": true,
+    "ignored_at": "2026-10-31T13:00:00Z"
+  }
+}
