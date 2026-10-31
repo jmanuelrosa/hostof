@@ -24,7 +24,7 @@ The command itself must remain free of third-party runtime dependencies.
 ## Architecture
 
 - `hostof` is the executable source and owns argument parsing, resolution, probing, attribution, and reporting.
-- `_hostof_runtime/` is private output support bundled into the release artifact.
+- `_hostof_runtime/` is private output support bundled into the release artifact. Its `ui.py` and `colors.py` are vendored from [dotkit](https://github.com/jmanuelrosa/dotkit) and pinned in `dotkit.json`: change them there and re-vendor, since `tests/test_dotkit_vendored.py` rejects an edit made here.
 - `tests/test_hostof.py` exercises behavior without network access.
 - `tests/test_distribution.py` proves the release asset runs without the source tree and matches its checksum.
 - `scripts/build.py` creates the deterministic executable `dist/hostof` and `dist/hostof.sha256`.
